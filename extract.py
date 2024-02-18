@@ -5,10 +5,10 @@ from ethereumetl.jobs.export_all_common import export_all_common
 from ethereumetl.cli.export_all import get_partitions
 from ethereumetl.utils import check_classic_provider_uri
 
+from settings import PROVIDER_URI
+
+
 logger = logging.getLogger("extract")
-
-
-PROVIDER_URI = "https://opbnb-mainnet-rpc.bnbchain.org"
 
 
 def extract_data_up_to(
@@ -32,8 +32,6 @@ def extract_data_up_to(
     logger.info(
         f"Extracting data in the block range [{earliest_block_number} {up_to_block_number}]"
     )
-
-    print(type(earliest_block_number))
 
     provider_uri = check_classic_provider_uri("ethereum", PROVIDER_URI)
 
