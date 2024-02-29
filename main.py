@@ -24,11 +24,11 @@ if __name__ == "__main__":
 
     extract_data(
         start_block_number=17442490,
-        end_block_number=17442500,
-        block_batch_size=10,
+        end_block_number=17442590,
+        block_batch_size=20,
         output_dir=settings.DATA_DIR,
-        max_workers=2,
-        concurrent_requests=1,
+        max_workers=5,
+        concurrent_requests=2,
     )
 
     # wait for all the file events in the queue to be processed by the Observer
