@@ -25,9 +25,10 @@ class CSVTransformHandler(FileSystemEventHandler):
     `/transactions/` directory.
     """
 
-    def __init__(self):
+    def __init__(self, file_path_queue=None):
         super().__init__()
         self._cwd = os.getcwd()
+        self._file_path_queue = file_path_queue
 
     def on_any_event(self, event):
 
@@ -39,6 +40,10 @@ class CSVTransformHandler(FileSystemEventHandler):
             parent_dirs = path.parent.parts
 
             if path.is_file() and ".tmp" not in parent_dirs and path.suffix == ".csv":
+
+                # if there handler has a queue then add the filepath there
+                if self._file_path_queue:
+                    self._file_path_queue.put(path)
 
                 # If the file is located within a `blocks` directory
                 if "blocks" in parent_dirs:
