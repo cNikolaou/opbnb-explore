@@ -11,9 +11,7 @@ from watchdog.events import (
     EVENT_TYPE_MODIFIED,
 )
 
-import settings
-
-from utils import to_relative_path
+from utils import to_relative_path, remove_file_and_parent_dirs
 from transform import (
     change_dir,
     transform_blocks_data,
@@ -25,7 +23,7 @@ from transform import (
 logger = logging.getLogger("CSVTransformHandler")
 
 
-def transform_file(path: Path, cwd: str):
+def transform_file(path: Path, cwd: str, retain_origin_file: bool = True):
 
     parent_dirs = path.parent.parts
 
@@ -59,6 +57,9 @@ def transform_file(path: Path, cwd: str):
         )
         transform_tokens_data(str(path), str(new_path))
 
+    if not retain_origin_file:
+        remove_file_and_parent_dirs(path)
+
 
 class CSVTransformHandler(FileSystemEventHandler):
     """
@@ -67,10 +68,11 @@ class CSVTransformHandler(FileSystemEventHandler):
     `/transactions/` directory.
     """
 
-    def __init__(self, file_path_queue=None):
+    def __init__(self, file_path_queue=None, retain_origin_files=True):
         super().__init__()
         self._cwd = os.getcwd()
         self._file_path_queue = file_path_queue
+        self._retain_origin_files = retain_origin_files
 
     def on_any_event(self, event):
 
@@ -87,7 +89,7 @@ class CSVTransformHandler(FileSystemEventHandler):
                 if self._file_path_queue:
                     self._file_path_queue.put(path)
 
-                transform_file(path, self._cwd)
+                transform_file(path, self._cwd, self._retain_origin_files)
 
 
 def set_csv_file_transformer(data_dir: str, file_path_queue: Optional[Queue] = None):
@@ -99,7 +101,7 @@ def set_csv_file_transformer(data_dir: str, file_path_queue: Optional[Queue] = N
     return observer
 
 
-def transform_files_in(data_root: str, data_dir: str):
+def transform_files_in(data_root: str, data_dir: str, retain_origin_files: bool = True):
     """
     Transform files in a directory.
     """
@@ -140,7 +142,7 @@ def transform_files_in(data_root: str, data_dir: str):
 
             file_path = end_dir / f"{data_dir}_{start_block_num}_{end_block_num}.csv"
 
-            transform_file(file_path, data_root)
+            transform_file(file_path, data_root, retain_origin_files)
 
             # only one iteration is valid
             iterated = True

@@ -9,3 +9,18 @@ def to_relative_path(file_path: Path, base_dir: Path) -> Path:
 
     relative_path = file_path.relative_to(base_dir)
     return relative_path
+
+
+def remove_file_and_parent_dirs(path: Path):
+
+    parent_dir, parent_of_parent_dir = path.parent, path.parent.parent
+
+    # remove all items from parent dir and remove the parent dir
+    for fl in parent_dir.iterdir():
+        fl.unlink()
+    parent_dir.rmdir()
+
+    # remove all items from parent of parent dir and remove the parent dir
+    for fl in parent_of_parent_dir.iterdir():
+        fl.unlink()
+    parent_of_parent_dir.rmdir()
