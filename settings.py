@@ -13,6 +13,13 @@ STORAGE_ACCESS_KEY = os.getenv("ACCESS_KEY", None)
 STORAGE_ACCESS_SECRET = os.getenv("ACCESS_SECRET", None)
 STORAGE_BUCKET_NAME = os.getenv("BUCKET_NAME", None)
 
+# Configure database connection
+DB_NAME = os.getenv("DB_NAME", "opbnb")
+DB_USER = os.getenv("DB_USER", "postgres")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+DB_HOST = os.getenv("DB_HOST", "localhost")
+
+# configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s: %(levelname)s/%(name)s] %(message)s",
