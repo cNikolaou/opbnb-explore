@@ -47,7 +47,6 @@ class UploadHandler:
             self.file_path_queue.task_done()
 
     def start(self):
-        self._running = True
         for _ in range(self.max_workers):
             thread = Thread(target=self.upload)
             thread.start()

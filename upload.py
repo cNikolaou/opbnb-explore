@@ -2,7 +2,6 @@ import os
 import logging
 from threading import Thread
 from functools import wraps
-from pathlib import Path
 from queue import Queue
 
 import boto3

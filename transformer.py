@@ -11,7 +11,11 @@ from watchdog.events import (
     EVENT_TYPE_MODIFIED,
 )
 
-from utils import to_relative_path, remove_file_and_parent_dirs
+from utils import (
+    to_relative_path,
+    remove_file_and_parent_dirs,
+    csv_has_row_data,
+)
 from transform import (
     change_dir,
     transform_blocks_data,
@@ -48,14 +52,14 @@ def transform_file(path: Path, cwd: str, retain_origin_file: bool = True):
         transform_transactions_data(str(path), str(new_path))
 
     # If the file is located within a `tokens` directory
-    elif "tokens" in parent_dirs:
-        replacements = {"tokens": "tokens_transformed"}
-        new_path = change_dir(path, replacements)
-        logger.info(
-            f"Transform file `{to_relative_path(path, cwd)}` "
-            f"to `{to_relative_path(new_path, cwd)}`"
-        )
-        transform_tokens_data(str(path), str(new_path))
+    # elif "tokens" in parent_dirs:
+    #     replacements = {"tokens": "tokens_transformed"}
+    #     new_path = change_dir(path, replacements)
+    #     logger.info(
+    #         f"Transform file `{to_relative_path(path, cwd)}` "
+    #         f"to `{to_relative_path(new_path, cwd)}`"
+    #     )
+    #     transform_tokens_data(str(path), str(new_path))
 
     if not retain_origin_file:
         remove_file_and_parent_dirs(path)
@@ -85,11 +89,13 @@ class CSVTransformHandler(FileSystemEventHandler):
 
             if path.is_file() and ".tmp" not in parent_dirs and path.suffix == ".csv":
 
-                # if there handler has a queue then add the filepath there
-                if self._file_path_queue:
-                    self._file_path_queue.put(path)
+                if csv_has_row_data(path):
 
-                transform_file(path, self._cwd, self._retain_origin_files)
+                    # if the handler has a queue then add the filepath there
+                    if self._file_path_queue:
+                        self._file_path_queue.put(path)
+
+                    transform_file(path, self._cwd, self._retain_origin_files)
 
 
 def set_csv_file_transformer(data_dir: str, file_path_queue: Optional[Queue] = None):

@@ -1,3 +1,4 @@
+import csv
 from pathlib import Path
 
 
@@ -24,3 +25,15 @@ def remove_file_and_parent_dirs(path: Path):
     for fl in parent_of_parent_dir.iterdir():
         fl.unlink()
     parent_of_parent_dir.rmdir()
+
+
+def csv_has_row_data(file_path: Path):
+
+    try:
+        with open(file_path, "r") as csv_file:
+            reader = csv.reader(csv_file)
+            # skip header
+            next(reader)
+            return any(reader)
+    except StopIteration:
+        return False
