@@ -10,8 +10,7 @@ from database.loaders import (
     load_token_transfers_data,
     load_tokens_data,
 )
-from utils import remove_file_and_parent_dirs
-from transform import change_dir
+from utils import remove_file_and_parent_dirs, change_dir
 
 
 logger = logging.getLogger(__name__)

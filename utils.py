@@ -27,6 +27,18 @@ def remove_file_and_parent_dirs(path: Path):
     parent_of_parent_dir.rmdir()
 
 
+def change_dir(dir: Path, replacements: dict) -> Path:
+    """
+    Replace the parts of Path `dir` based on the replacements to generate
+    a new Path that is returned by the function
+    """
+
+    path_parts = list(dir.parts)
+    new_path_parts = [replacements.get(part, part) for part in path_parts]
+    new_path = Path(*new_path_parts)
+    return new_path
+
+
 def csv_has_row_data(file_path: Path):
 
     try:
