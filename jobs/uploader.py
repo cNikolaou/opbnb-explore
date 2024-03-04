@@ -3,8 +3,8 @@ import logging
 from queue import Queue
 from threading import Thread
 
-from utils import to_relative_path
-from upload import upload_file
+from .utils import to_relative_path
+from .upload import upload_file
 
 
 logger = logging.getLogger("UploadHander")

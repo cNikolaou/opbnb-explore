@@ -9,7 +9,7 @@ from botocore.config import Config
 from botocore.exceptions import ClientError
 
 import settings
-from utils import to_relative_path
+from .utils import to_relative_path
 
 
 logger = logging.getLogger(__name__)

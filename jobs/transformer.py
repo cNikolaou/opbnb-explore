@@ -11,12 +11,12 @@ from watchdog.events import (
     EVENT_TYPE_MODIFIED,
 )
 
-from utils import (
+from .utils import (
     to_relative_path,
     csv_has_row_data,
     change_dir,
 )
-from transform import (
+from .transform import (
     transform_blocks_data,
     transform_transactions_data,
     # transform_tokens_data,

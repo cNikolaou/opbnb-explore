@@ -3,7 +3,7 @@ import threading
 import logging
 from pathlib import Path
 
-from utils import remove_file_and_parent_dirs
+from .utils import remove_file_and_parent_dirs
 
 
 logger = logging.getLogger("FileCleaner")
@@ -47,7 +47,7 @@ class FileCleaner(threading.Thread):
                         for file_path in end_dir.iterdir():
 
                             if file_path.stat().st_mtime + self.oldest_file_age < now:
-                                logger.debug(
+                                logger.info(
                                     f"Removing file: {file_path} w/ "
                                     f"last mod time: {file_path.stat().st_mtime} "
                                     f"time since: {now - file_path.stat().st_mtime}"

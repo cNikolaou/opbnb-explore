@@ -1,7 +1,7 @@
 import sys
 
 from database.utils import create_tables
-from db_loader import load_to_db_table
+from jobs.db_loader import load_to_db_table
 
 
 if __name__ == "__main__":

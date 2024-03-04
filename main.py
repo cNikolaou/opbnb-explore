@@ -11,9 +11,9 @@ from web3 import Web3
 
 import settings
 from extract import extract_data
-from transformer import set_csv_file_transformer
 from database.utils import create_tables
-from db_loader import DBLoadHandler
+from jobs.transformer import set_csv_file_transformer
+from jobs.db_loader import DBLoadHandler
 from jobs.file_cleaner import FileCleaner
 
 
