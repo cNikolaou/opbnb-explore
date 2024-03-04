@@ -67,7 +67,11 @@ observer.start()
 logger.info("Initisalised CSVTransformer")
 
 # start the thread that will be loading the data from CSV files to database
-db_loader = DBLoadHandler(file_path_queue, max_workers=1, retain_origin_files=True)
+db_loader = DBLoadHandler(
+    file_path_queue,
+    max_workers=1,
+    retain_origin_files=settings.RETAIN_INTERMEDIATE_FILES,
+)
 db_loader.start()
 logger.info("Initisalised DBLoader")
 
