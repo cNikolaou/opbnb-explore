@@ -1,5 +1,6 @@
 import csv
 import logging
+import io
 
 import psycopg2
 
@@ -14,6 +15,22 @@ TRANSACTIONS_CSV_FILE_PATH = "./transactions_transformed.csv"
 TOKEN_TRANSFERS_CSV_FILE_PATH = "./token_transfers_transformed.csv"
 
 
+def get_streamed_csv_data(input_filename: list, columns_to_remove: int = 1):
+
+    buffer = io.StringIO()
+
+    with open(input_filename, "r") as f:
+        # skip header and copy the rest
+        next(f)
+
+        reader = csv.reader(f)
+        for row in reader:
+            transformed_row = ",".join(row[:-columns_to_remove]) + "\n"
+            buffer.write(transformed_row)
+
+    return buffer
+
+
 def load_blocks_data(input_filename: str, table_name: str = "blocks"):
 
     conn = psycopg2.connect(
@@ -21,36 +38,35 @@ def load_blocks_data(input_filename: str, table_name: str = "blocks"):
     )
     cur = conn.cursor()
 
-    with open(input_filename, "r") as f:
+    buffer = get_streamed_csv_data(input_filename, 2)
+    buffer.seek(0)
 
-        # skip header and copy the rest
-        next(f)
-        cur.copy_from(
-            f,
-            table_name,
-            sep=",",
-            columns=(
-                "number",
-                "hash",
-                "parent_hash",
-                "nonce",
-                "sha3_uncles",
-                "logs_bloom",
-                "transactions_root",
-                "state_root",
-                "receipts_root",
-                "miner",
-                "difficulty",
-                "total_difficulty",
-                "size",
-                "extra_data",
-                "gas_limit",
-                "gas_used",
-                "timestamp",
-                "transaction_count",
-                "base_fee_per_gas",
-            ),
-        )
+    cur.copy_from(
+        buffer,
+        table_name,
+        sep=",",
+        columns=(
+            "number",
+            "hash",
+            "parent_hash",
+            "nonce",
+            "sha3_uncles",
+            "logs_bloom",
+            "transactions_root",
+            "state_root",
+            "receipts_root",
+            "miner",
+            "difficulty",
+            "total_difficulty",
+            "size",
+            "extra_data",
+            "gas_limit",
+            "gas_used",
+            "timestamp",
+            "transaction_count",
+            "base_fee_per_gas",
+        ),
+    )
 
     conn.commit()
     cur.close()
@@ -64,29 +80,28 @@ def load_transactions_data(input_filename: str, table_name: str = "transactions"
     )
     cur = conn.cursor()
 
-    with open(input_filename) as f:
+    buffer = get_streamed_csv_data(input_filename, 3)
+    buffer.seek(0)
 
-        # skip header and copy the rest
-        next(f)
-        cur.copy_from(
-            f,
-            table_name,
-            sep=",",
-            columns=(
-                "hash",
-                "nonce",
-                "block_hash",
-                "block_number",
-                "transaction_index",
-                "from_address",
-                "to_address",
-                "value",
-                "gas",
-                "gas_price",
-                "input",
-                "block_timestamp",
-            ),
-        )
+    cur.copy_from(
+        buffer,
+        table_name,
+        sep=",",
+        columns=(
+            "hash",
+            "nonce",
+            "block_hash",
+            "block_number",
+            "transaction_index",
+            "from_address",
+            "to_address",
+            "value",
+            "gas",
+            "gas_price",
+            "input",
+            "block_timestamp",
+        ),
+    )
 
     conn.commit()
     cur.close()
