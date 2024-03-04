@@ -27,6 +27,8 @@ class FileCleaner(threading.Thread):
     def run(self):
 
         while True:
+
+            time.sleep(self.oldest_file_age)
             now = time.time()
 
             for subdir in self.subdirs:
@@ -53,5 +55,3 @@ class FileCleaner(threading.Thread):
                                     f"time since: {now - file_path.stat().st_mtime}"
                                 )
                                 remove_file_and_parent_dirs(file_path)
-
-            time.sleep(self.oldest_file_age)
