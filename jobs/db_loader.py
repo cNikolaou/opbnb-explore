@@ -28,7 +28,10 @@ def load_to_table(file_path: Path, db_table: str, retain_origin_files: bool = Tr
         elif db_table == "tokens":
             load_tokens_data(file_path)
 
-        logger.info(f"Loaded data to table `{db_table}` from: {file_path}")
+        logger.info(
+            f"Loaded data to table `{db_table}` from: {file_path} "
+            f"({file_path.stat().st_size} bytes)"
+        )
 
         if not retain_origin_files:
             remove_file_and_parent_dirs(file_path)
@@ -227,6 +230,62 @@ class DBLoadHandler:
             logger.warning("Timeout occurred while waiting for queue to finish.")
         else:
             logger.info("Queue processing completed successfully.")
+
+
+class DBLoader:
+    """
+    Simple class for loading file data to DB based on the order they
+    are placed in the queue.
+
+    Assumes that the files are placed so that there are no foreign key
+    issue when we COPY/INSERT them to the appropriate table.
+    """
+
+    def __init__(self, file_path_queue: Queue, max_workers: int = 1):
+        self.file_path_queue = file_path_queue
+
+        self.max_workers = max_workers
+        self.worker_threads = []
+        self.processed_tokens_files = []
+
+    def load(self):
+        """
+        Task worker threads
+        """
+        while True:
+
+            file_path = Path(self.file_path_queue.get())
+
+            # if we reached the end of the files to be processed
+            if file_path is None:
+                self.file_path_queue.task_done()
+                break
+
+            db_table = file_path.parent.parts[1]
+
+            load_to_table(file_path=file_path, db_table=db_table)
+
+            self.file_path_queue.task_done()
+
+    def start(self):
+
+        for _ in range(self.max_workers):
+            thread = Thread(target=self.load)
+            thread.start()
+            self.worker_threads.append(thread)
+
+    def stop(self):
+        for _ in range(self.max_workers):
+            self.file_path_queue.put(None)
+
+        for thread in self.worker_threads:
+            thread.join()
+
+    def wait_for_loads(self):
+        """
+        Start a thread to wait for all the files from the queue to be uploaded.
+        """
+        self.file_path_queue.join()
 
 
 def load_to_db_table(
