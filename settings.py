@@ -8,20 +8,20 @@ PROVIDER_URI = os.getenv("PROVIDER_URI", "https://opbnb-mainnet-rpc.bnbchain.org
 DATA_DIR = os.getenv("DATA_DIR", "data")
 
 # Pipeline work config
-BLOCK_BATCH_SIZE = int(os.getenv("BLOCK_BATCH_SIZE", 20))
-MAX_EXTRACT_WORKERS = int(os.getenv("MAX_EXTRACT_WORKERS", 5))
-CONCURENT_EXTRACT_REQUESTS = int(os.getenv("CONCURENT_EXTRACT_REQUESTS", 2))
-MAX_EXTRACT_BLOCK_RANGE = int(os.getenv("MAX_EXTRACT_BLOCK_RANGE", 10000))
+BLOCK_BATCH_SIZE = int(os.getenv("ETL_BLOCK_BATCH_SIZE", 20))
+MAX_EXTRACT_WORKERS = int(os.getenv("ETL_MAX_EXTRACT_WORKERS", 5))
+CONCURENT_EXTRACT_REQUESTS = int(os.getenv("ETL_CONCURENT_EXTRACT_REQUESTS", 2))
+MAX_EXTRACT_BLOCK_RANGE = int(os.getenv("ETL_MAX_EXTRACT_BLOCK_RANGE", 10000))
 RETAIN_INTERMEDIATE_FILES = (
-    True if os.getenv("RETAIN_INTERMEDIATE_FILES", "True") == "True" else False
+    True if os.getenv("ETL_RETAIN_INTERMEDIATE_FILES", "True") == "True" else False
 )
-OLDEST_FILE_AGE = int(os.getenv("OLDEST_FILE_AGE", 600))
+OLDEST_FILE_AGE = int(os.getenv("ETL_OLDEST_FILE_AGE", 600))
 
 # Configure the remote storage
-STORAGE_ENDPOINT = os.getenv("ENDPOINT", None)
-STORAGE_ACCESS_KEY = os.getenv("ACCESS_KEY", None)
-STORAGE_ACCESS_SECRET = os.getenv("ACCESS_SECRET", None)
-STORAGE_BUCKET_NAME = os.getenv("BUCKET_NAME", None)
+STORAGE_ENDPOINT = os.getenv("STORAGE_ENDPOINT", None)
+STORAGE_ACCESS_KEY = os.getenv("STORAGE_ACCESS_KEY", None)
+STORAGE_ACCESS_SECRET = os.getenv("STORAGE_ACCESS_SECRET", None)
+STORAGE_BUCKET_NAME = os.getenv("STORAGE_BUCKET_NAME", None)
 
 # Configure database connection
 DB_NAME = os.getenv("DB_NAME", "opbnb")
