@@ -121,6 +121,7 @@ class DBLoadHandler:
         Task worker threads
         """
         while True:
+
             file_path = self.file_path_queue.get()
 
             # if we reached the end of the files to be processed
@@ -191,18 +192,42 @@ class DBLoadHandler:
             thread.start()
             self.worker_threads.append(thread)
 
-    def stop(self):
+    def stop(self, q_warning: bool = True):
         for _ in range(self.max_workers):
             self.file_path_queue.put(None)
 
         for thread in self.worker_threads:
             thread.join()
 
-    def wait_for_loads(self):
+        if q_warning:
+            q_size = self.file_path_queue.qsize()
+            if q_size != 0:
+                logger.warning(f"The queue has {q_size} elements left.")
+                while not self.file_path_queue.empty():
+                    file_path = self.file_path_queue.get()
+                    logger.warning(f"Has not processed file: {file_path}")
+                    self.file_path_queue.task_done()
+
+    def wait_for_loads(self, timeout: int = 10):
         """
-        Wait for all the files from the queue to be uploaded.
+        Start a thread to wait for all the files from the queue to be uploaded.
+
+        Timeout is necessary in case the queue is in a busy wait mode where
+        there are `token_transfers.csv` files to be processed but the relevant
+        `tokens.csv` files won't be processed.
         """
-        self.file_path_queue.join()
+
+        logger.warning(
+            f"Terminating file queue with {self.file_path_queue.qsize()} elements left."
+        )
+        queue_join_thread = Thread(target=self.file_path_queue.join)
+        queue_join_thread.start()
+        queue_join_thread.join(timeout=timeout)
+
+        if queue_join_thread.is_alive():
+            logger.warning("Timeout occurred while waiting for queue to finish.")
+        else:
+            logger.info("Queue processing completed successfully.")
 
 
 def load_to_db_table(
