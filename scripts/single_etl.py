@@ -3,7 +3,7 @@ from queue import Queue
 import time
 
 import settings
-from scripts.extract import extract_data
+from jobs.extract import extract_data
 from jobs.transformer import set_csv_file_transformer
 
 # from uploader import UploadHandler

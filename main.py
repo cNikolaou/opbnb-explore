@@ -12,8 +12,7 @@ from web3 import Web3
 import settings
 from database.utils import create_tables
 from jobs.extract import extract_data
-from jobs.transformer import set_csv_file_transformer
-from jobs.db_loader import DBLoadHandler
+from jobs.db_loader import DBLoader
 from jobs.file_cleaner import FileCleaner
 
 
@@ -29,16 +28,10 @@ def shutdown_signal_handler(signum, frame):
     )
 
     logger.info(
-        f"Wait for all the file events to be processed. "
-        f"Events to process {observer.event_queue.qsize()}"
-    )
-    observer.event_queue.join()
-
-    logger.info(
         f"Wait for the files queued on the db_loader to be processed and loaded. "
         f"Files to process {db_loader.file_path_queue.qsize()}"
     )
-    db_loader.wait_for_loads(timeout=10)
+    db_loader.wait_for_loads()
 
     logger.info("Stopping DBLoader threads")
     db_loader.stop()
@@ -63,27 +56,20 @@ if (len(sys.argv) == 2 and sys.argv[1] == "create") or (settings.DB_CREATE):
 # queue to keep track of the files that habe to be uploaded to a storage
 file_path_queue = Queue()
 
-# set the Observer that handles the CSV file transformation
-observer = set_csv_file_transformer(settings.DATA_DIR, file_path_queue)
-observer.start()
-logger.info("Initisalised CSVTransformer")
-
 # start the thread that will be loading the data from CSV files to database
-db_loader = DBLoadHandler(file_path_queue, max_workers=1)
+db_loader = DBLoader(file_path_queue, max_workers=1)
 db_loader.start()
 logger.info("Initisalised DBLoader")
 
 # start cleaner deamon thread
 subdirs_to_clean = [
     "blocks",
-    "blocks_transformed",
     "contracts",
     "logs",
     "receipts",
     "token_transfers",
     "tokens",
     "transactions",
-    "transactions_transformed",
 ]
 
 fc = FileCleaner(
@@ -127,5 +113,6 @@ while True:
             output_dir=settings.DATA_DIR,
             max_workers=settings.MAX_EXTRACT_WORKERS,
             concurrent_requests=settings.CONCURENT_EXTRACT_REQUESTS,
+            ready_files_queue=file_path_queue,
         )
         latest_processed_block_number = latest_block_number

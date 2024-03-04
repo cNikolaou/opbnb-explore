@@ -1,11 +1,12 @@
 import logging
+from queue import Queue
 
 from web3 import Web3
-from ethereumetl.jobs.export_all_common import export_all_common
 from ethereumetl.cli.export_all import get_partitions
 from ethereumetl.utils import check_classic_provider_uri
 
 from settings import PROVIDER_URI
+from .export import export_all_common
 
 
 logger = logging.getLogger(__name__)
@@ -35,6 +36,7 @@ def extract_data(
     output_dir: str = "data",
     max_workers: int = 5,
     concurrent_requests: int = 5,
+    ready_files_queue: Queue = None,
 ):
     """
     Use ethereumetl to extract data from the opBNB blockchain.
@@ -73,6 +75,7 @@ def extract_data(
         provider_uri=PROVIDER_URI,
         max_workers=max_workers,
         batch_size=concurrent_requests,
+        ready_files_queue=ready_files_queue,
     )
 
     logger.info("Extraction complete!")
