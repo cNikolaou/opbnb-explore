@@ -13,7 +13,6 @@ from watchdog.events import (
 
 from utils import (
     to_relative_path,
-    remove_file_and_parent_dirs,
     csv_has_row_data,
     change_dir,
 )
@@ -27,7 +26,7 @@ from transform import (
 logger = logging.getLogger("CSVTransformHandler")
 
 
-def transform_file(path: Path, cwd: str, retain_origin_file: bool = True):
+def transform_file(path: Path, cwd: str):
 
     parent_dirs = path.parent.parts
 
@@ -61,9 +60,6 @@ def transform_file(path: Path, cwd: str, retain_origin_file: bool = True):
     #     )
     #     transform_tokens_data(str(path), str(new_path))
 
-    if not retain_origin_file:
-        remove_file_and_parent_dirs(path)
-
 
 class CSVTransformHandler(FileSystemEventHandler):
     """
@@ -72,11 +68,10 @@ class CSVTransformHandler(FileSystemEventHandler):
     `/transactions/` directory.
     """
 
-    def __init__(self, file_path_queue=None, retain_origin_files=True):
+    def __init__(self, file_path_queue=None):
         super().__init__()
         self._cwd = os.getcwd()
         self._file_path_queue = file_path_queue
-        self._retain_origin_files = retain_origin_files
 
     def on_any_event(self, event):
 
@@ -89,13 +84,27 @@ class CSVTransformHandler(FileSystemEventHandler):
 
             if path.is_file() and ".tmp" not in parent_dirs and path.suffix == ".csv":
 
-                if csv_has_row_data(path):
+                try:
+                    # file events are fired on creation and on modification
+                    # and the data of the modification is most times present
+                    # by the time the EVENT_TYPE_CREATED is processed; so
+                    # ignore these events for now
+                    if event.event_type == EVENT_TYPE_MODIFIED and csv_has_row_data(
+                        path
+                    ):
 
-                    # if the handler has a queue then add the filepath there
-                    if self._file_path_queue:
-                        self._file_path_queue.put(path)
+                        if "blocks" in parent_dirs or "transactions" in parent_dirs:
+                            transform_file(
+                                path,
+                                self._cwd,
+                            )
 
-                    transform_file(path, self._cwd, self._retain_origin_files)
+                        # if the handler has a queue then add the filepath there
+                        if self._file_path_queue:
+                            self._file_path_queue.put(path)
+
+                except Exception as e:
+                    logger.error(f"File {path} error: {e}")
 
 
 def set_csv_file_transformer(data_dir: str, file_path_queue: Optional[Queue] = None):
