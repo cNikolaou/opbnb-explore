@@ -55,8 +55,7 @@ w3 = Web3(Web3.HTTPProvider(settings.PROVIDER_URI))
 # create the data directory if it doesn't exist
 os.makedirs(settings.DATA_DIR, exist_ok=True)
 
-
-if len(sys.argv) == 2 and sys.argv[1] == "create":
+if (len(sys.argv) == 2 and sys.argv[1] == "create") or (settings.DB_CREATE):
     create_tables()
 
 # queue to keep track of the files that habe to be uploaded to a storage
@@ -94,16 +93,17 @@ while True:
         )
 
         latest_block_number = min(
-            latest_processed_block_number + 1000, latest_block_number
+            latest_processed_block_number + settings.MAX_EXTRACT_BLOCK_RANGE,
+            latest_block_number,
         )
 
         # process the new blocks
         extract_data(
             start_block_number=latest_processed_block_number + 1,
             end_block_number=latest_block_number,
-            block_batch_size=20,
+            block_batch_size=settings.BLOCK_BATCH_SIZE,
             output_dir=settings.DATA_DIR,
-            max_workers=5,
-            concurrent_requests=2,
+            max_workers=settings.MAX_EXTRACT_WORKERS,
+            concurrent_requests=settings.CONCURENT_EXTRACT_REQUESTS,
         )
         latest_processed_block_number = latest_block_number
