@@ -14,6 +14,8 @@ from extract import extract_data
 from transformer import set_csv_file_transformer
 from database.utils import create_tables
 from db_loader import DBLoadHandler
+from jobs.file_cleaner import FileCleaner
+
 
 logger = logging.getLogger(__name__)
 
@@ -67,13 +69,29 @@ observer.start()
 logger.info("Initisalised CSVTransformer")
 
 # start the thread that will be loading the data from CSV files to database
-db_loader = DBLoadHandler(
-    file_path_queue,
-    max_workers=1,
-    retain_origin_files=settings.RETAIN_INTERMEDIATE_FILES,
-)
+db_loader = DBLoadHandler(file_path_queue, max_workers=1)
 db_loader.start()
 logger.info("Initisalised DBLoader")
+
+# start cleaner deamon thread
+subdirs_to_clean = [
+    "blocks",
+    "blocks_transformed",
+    "contracts",
+    "logs",
+    "receipts",
+    "token_transfers",
+    "tokens",
+    "transactions",
+    "transactions_transformed",
+]
+
+fc = FileCleaner(
+    root_dir="data",
+    subdirs=subdirs_to_clean,
+    oldest_file_age=settings.OLDEST_FILE_AGE,
+)
+fc.start()
 
 # read the latest block number that has been processed
 latest_processed_block_number = w3.eth.getBlock("latest")["number"]

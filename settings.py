@@ -15,6 +15,7 @@ MAX_EXTRACT_BLOCK_RANGE = int(os.getenv("MAX_EXTRACT_BLOCK_RANGE", 10000))
 RETAIN_INTERMEDIATE_FILES = (
     True if os.getenv("RETAIN_INTERMEDIATE_FILES", "True") == "True" else False
 )
+OLDEST_FILE_AGE = int(os.getenv("OLDEST_FILE_AGE", 600))
 
 # Configure the remote storage
 STORAGE_ENDPOINT = os.getenv("ENDPOINT", None)
@@ -27,7 +28,7 @@ DB_NAME = os.getenv("DB_NAME", "opbnb")
 DB_USER = os.getenv("DB_USER", "postgres")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_CREATE = bool(True if os.getenv("DB_CREATE", "False") == "True" else False)
+DB_CREATE = bool(True if os.getenv("DB_CREATE", "True") == "True" else False)
 
 # configure logging
 logging.basicConfig(
