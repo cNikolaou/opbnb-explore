@@ -1,8 +1,12 @@
+import logging
 from pathlib import Path
 
 import psycopg2
 
 from settings import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST
+
+
+logger = logging.getLogger(__name__)
 
 CREATE_BLOCKS_TABLE = "create_blocks_table.sql"
 CREATE_TRANSACTIONS_TABLE = "create_transactions_table.sql"
@@ -26,31 +30,31 @@ def create_tables():
             cur.execute(sql_script)
             conn.commit()
 
-        print("`blocks` table created successfully")
+        logger.info("`blocks` table created successfully")
 
         with open(current_dir / CREATE_TRANSACTIONS_TABLE, "r") as f:
             sql_script = f.read()
             cur.execute(sql_script)
             conn.commit()
 
-        print("`transactions` table created successfully")
+        logger.info("`transactions` table created successfully")
 
         with open(current_dir / CREATE_TOKENS_TABLE, "r") as f:
             sql_script = f.read()
             cur.execute(sql_script)
             conn.commit()
 
-        print("`tokens` table created successfully")
+        logger.info("`tokens` table created successfully")
 
         with open(current_dir / CREATE_TOKEN_TRANSFERS_TABLE, "r") as f:
             sql_script = f.read()
             cur.execute(sql_script)
             conn.commit()
 
-        print("`token_transfers` table created successfully")
+        logger.info("`token_transfers` table created successfully")
 
     except (Exception, psycopg2.DatabaseError) as error:
-        print("Error while creating table:", error)
+        logger.error("Error while creating table:", error)
 
     finally:
         if conn is not None:
