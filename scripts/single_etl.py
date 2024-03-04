@@ -3,13 +3,13 @@ from queue import Queue
 import time
 
 import settings
-from extract import extract_data
-from transformer import set_csv_file_transformer
+from scripts.extract import extract_data
+from jobs.transformer import set_csv_file_transformer
 
 # from uploader import UploadHandler
 
 from database.utils import create_tables
-from db_loader import DBLoadHandler
+from jobs.db_loader import DBLoadHandler
 
 
 if __name__ == "__main__":
