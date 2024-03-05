@@ -80,28 +80,34 @@ def load_transactions_data(input_filename: str, table_name: str = "transactions"
     )
     cur = conn.cursor()
 
-    buffer = get_streamed_csv_data(input_filename, 3)
-    buffer.seek(0)
+    with open(input_filename) as f:
 
-    cur.copy_from(
-        buffer,
-        table_name,
-        sep=",",
-        columns=(
-            "hash",
-            "nonce",
-            "block_hash",
-            "block_number",
-            "transaction_index",
-            "from_address",
-            "to_address",
-            "value",
-            "gas",
-            "gas_price",
-            "input",
-            "block_timestamp",
-        ),
-    )
+        # skip header and copy the rest
+        next(f)
+
+        cur.copy_from(
+            f,
+            table_name,
+            sep=",",
+            null="",
+            columns=(
+                "hash",
+                "nonce",
+                "block_hash",
+                "block_number",
+                "transaction_index",
+                "from_address",
+                "to_address",
+                "value",
+                "gas",
+                "gas_price",
+                "input",
+                "block_timestamp",
+                "max_fee_per_gas",
+                "max_priority_fee_per_gas",
+                "transaction_type",
+            ),
+        )
 
     conn.commit()
     cur.close()

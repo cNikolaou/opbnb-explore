@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS transactions (
     gas_price BIGINT NOT NULL,
     input TEXT,
     block_timestamp BIGINT NOT NULL,
+    max_fee_per_gas BIGINT,
+    max_priority_fee_per_gas BIGINT,
+    transaction_type INT,
 
     FOREIGN KEY (block_hash) REFERENCES blocks(hash)
 )
