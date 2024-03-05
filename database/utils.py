@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 CREATE_BLOCKS_TABLE = "create_blocks_table.sql"
 CREATE_TRANSACTIONS_TABLE = "create_transactions_table.sql"
 CREATE_RECEIPTS_TABLE = "create_receipts_table.sql"
+CREATE_LOGS_TABLE = "create_logs_table.sql"
 CREATE_TOKENS_TABLE = "create_tokens_table.sql"
 CREATE_TOKEN_TRANSFERS_TABLE = "create_token_transfers_table.sql"
 
@@ -39,6 +40,20 @@ def create_tables():
             conn.commit()
 
         logger.info("`transactions` table created successfully")
+
+        with open(current_dir / CREATE_RECEIPTS_TABLE, "r") as f:
+            sql_script = f.read()
+            cur.execute(sql_script)
+            conn.commit()
+
+        logger.info("`receipts` table created successfully")
+
+        with open(current_dir / CREATE_LOGS_TABLE, "r") as f:
+            sql_script = f.read()
+            cur.execute(sql_script)
+            conn.commit()
+
+        logger.info("`logs` table created successfully")
 
         with open(current_dir / CREATE_RECEIPTS_TABLE, "r") as f:
             sql_script = f.read()

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS receipts (
-    transaction_hash CHAR(66),
+    transaction_hash CHAR(66) PRIMARY KEY,
     transaction_index INTEGER NOT NULL,
     block_hash CHAR(66),
     block_number BIGINT NOT NULL,

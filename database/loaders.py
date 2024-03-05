@@ -147,6 +147,51 @@ def load_receipts_data(input_filename: str, table_name: str = "receipts"):
     conn.close()
 
 
+def load_logs_data(input_filename: str, table_name: str = "logs"):
+
+    conn = psycopg2.connect(
+        dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST
+    )
+    cur = conn.cursor()
+
+    with open(input_filename) as f:
+
+        reader = csv.reader(f)
+
+        # skip header and copy the rest
+        next(reader)
+
+        # use the less efficient INSERT INTO (instead of the `copy_from`)
+        # to handle the topics array; potentially could be optimised with
+        # a buffer and copy_from
+        for row in reader:
+
+            topics = row[-1]
+            topics_array = "{" + topics + "}"
+
+            try:
+                sql_cmd = """
+                INSERT INTO %s(log_index, transaction_hash, transaction_index,
+                                block_hash, block_number, address, data, topics)
+                VALUES(%s, '%s', %s, '%s', %s, '%s', '%s', '%s')
+                ON CONFLICT DO NOTHING;
+                """ % (
+                    table_name,
+                    *row[:-1],
+                    topics_array,
+                )
+
+                print(sql_cmd)
+                cur.execute(sql_cmd)
+
+            except Exception as e:
+                logger.error(e)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 def load_token_transfers_data(input_filename: str, table_name: str = "token_transfers"):
 
     conn = psycopg2.connect(
