@@ -44,7 +44,7 @@ export default function TransactionsDataDisplay() {
       </div>
       <div>
         <h2>Highest Gas Paid Transactions</h2>
-        <table className="table-auto w-full">
+        <table className="table-auto">
           <thead>
             <tr>
               <th>Transaction</th>
