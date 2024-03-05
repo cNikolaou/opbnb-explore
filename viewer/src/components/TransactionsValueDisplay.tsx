@@ -2,29 +2,22 @@ import { useEffect, useState } from 'react';
 
 import type {
   ResponseData,
-  HighestGasPaidTransactions,
   HighestValueTransactions,
-} from '../pages/api/transaction-metrics';
+} from '../pages/api/transactions-value-metrics';
 
-export default function TransactionsDataDisplay() {
+export default function TransactionsValueDisplay() {
   const [avgTransactionValue, setAvgTransactionValue] = useState<number>();
-  const [transactionSuccessRate, setTransactionSuccessRate] = useState<
-    number | null
-  >();
-  const [highestGasPaidTransactions, setHighestGasPaidTransactions] =
-    useState<HighestGasPaidTransactions[]>();
   const [highestValueTransactions, setHighestValueTransactions] =
     useState<HighestValueTransactions[]>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('/api/transaction-metrics');
+        const res = await fetch('/api/transactions-value-metrics');
         const data: ResponseData = await res.json();
         setAvgTransactionValue(data.avgTransactionValue);
-        setTransactionSuccessRate(data.transactionSuccessRate);
-        setHighestGasPaidTransactions(data.highestGasPaidTransactions);
         setHighestValueTransactions(data.highestValueTransactions);
+        console.log(data);
       } catch (e) {
         console.error(e);
       }
@@ -41,28 +34,6 @@ export default function TransactionsDataDisplay() {
     <>
       <div>
         <div>Average Transaction Value: {avgTransactionValue}</div>
-      </div>
-      <div>
-        <h2>Highest Gas Paid Transactions</h2>
-        <table className="table-auto">
-          <thead>
-            <tr>
-              <th>Transaction</th>
-              <th>From</th>
-              <th>To</th>
-            </tr>
-          </thead>
-          <tbody>
-            {highestGasPaidTransactions &&
-              highestGasPaidTransactions?.map((trn) => (
-                <tr key={trn.transaction_hash}>
-                  <td>{trn.transaction_hash}</td>
-                  <td>{trn.from_address}</td>
-                  <td>{trn.to_address}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
       </div>
       <div>
         <h2>Highest Value Tranfered Transactions</h2>

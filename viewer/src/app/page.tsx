@@ -1,8 +1,9 @@
 'use client';
-import TransactionsDataDisplay from '../components/TransactionsDataDisplay';
 import AggregateMetricsDisplay from '../components/AggregateMetricsDisplay';
 import GasInfoDisplay from '../components/GasInfoDisplay';
 import AddressActivityDisplay from '../components/AddressActivityDisplay';
+import TransactionsValueDisplay from '../components/TransactionsValueDisplay';
+import TransactionsFeeDisplay from '../components/TransactionsFeeDisplay';
 
 export default function Home() {
   return (
@@ -11,7 +12,8 @@ export default function Home() {
       <GasInfoDisplay />
       <AggregateMetricsDisplay />
       <AddressActivityDisplay />
-      <TransactionsDataDisplay />
+      <TransactionsValueDisplay />
+      <TransactionsFeeDisplay />
     </>
   );
 }
