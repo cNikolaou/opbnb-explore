@@ -14,6 +14,13 @@
     "react": "^18",
     "react-dom": "^18"
   },
+  "prettier": {
+    "printWidth": 80,
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
