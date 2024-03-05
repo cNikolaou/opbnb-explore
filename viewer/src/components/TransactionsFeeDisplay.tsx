@@ -48,7 +48,13 @@ export default function TransactionsFeeDisplay() {
                   key={trn.transaction_hash}
                   className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 >
-                  <td className="px-6 py-4">{trn.transaction_hash}</td>
+                  <td className="px-6 py-4">
+                    <a
+                      href={`https://opbnb.bscscan.com/tx/${trn.transaction_hash}`}
+                    >
+                      {trn.transaction_hash}
+                    </a>
+                  </td>
                 </tr>
               ))}
           </tbody>
