@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model blocks {
+  number            BigInt         @unique
+  hash              String         @id @db.Char(66)
+  parent_hash       String         @db.Char(66)
+  nonce             String         @db.Char(18)
+  sha3_uncles       String         @db.VarChar(66)
+  logs_bloom        String?
+  transactions_root String         @db.Char(66)
+  state_root        String         @db.Char(66)
+  receipts_root     String         @db.Char(66)
+  miner             String         @db.Char(42)
+  difficulty        Decimal        @db.Decimal(38, 0)
+  total_difficulty  Decimal        @db.Decimal(38, 0)
+  size              BigInt
+  extra_data        String?
+  gas_limit         BigInt
+  gas_used          BigInt
+  timestamp         BigInt
+  transaction_count BigInt
+  base_fee_per_gas  BigInt
+  logs              logs[]
+  receipts          receipts[]
+  transactions      transactions[]
+}
+
+model logs {
+  log_index         BigInt
+  transaction_hash  String       @db.Char(66)
+  transaction_index BigInt
+  block_hash        String       @db.Char(66)
+  block_number      BigInt
+  address           String       @db.Char(42)
+  data              String?
+  topics            String[]
+  blocks            blocks       @relation(fields: [block_hash], references: [hash], onDelete: NoAction, onUpdate: NoAction)
+  transactions      transactions @relation(fields: [transaction_hash], references: [hash], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([log_index, transaction_hash])
+}
+
+model receipts {
+  transaction_hash    String       @id @db.Char(66)
+  transaction_index   Int
+  block_hash          String?      @db.Char(66)
+  block_number        BigInt
+  cumulative_gas_used BigInt
+  gas_used            BigInt
+  contract_address    String?      @db.Char(42)
+  root                String?      @db.VarChar
+  status              Int
+  effective_gas_price BigInt
+  l1_fee              BigInt?
+  l1_gas_used         BigInt?
+  l1_gas_price        BigInt?
+  l1_fee_scalar       Decimal?     @db.Decimal
+  blocks              blocks?      @relation(fields: [block_hash], references: [hash], onDelete: NoAction, onUpdate: NoAction)
+  transactions        transactions @relation(fields: [transaction_hash], references: [hash], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model token_transfers {
+  id               Int          @id @default(autoincrement())
+  token_address    String       @db.Char(42)
+  from_address     String       @db.Char(42)
+  to_address       String       @db.Char(42)
+  value            Decimal      @db.Decimal(78, 0)
+  transaction_hash String       @db.Char(66)
+  log_index        BigInt
+  block_number     BigInt
+  tokens           tokens       @relation(fields: [token_address], references: [address], onDelete: NoAction, onUpdate: NoAction)
+  transactions     transactions @relation(fields: [transaction_hash], references: [hash], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tokens {
+  address         String            @id @db.Char(42)
+  symbol          String            @db.VarChar(255)
+  name            String            @db.VarChar(255)
+  decimals        Int?
+  total_supply    Decimal?          @db.Decimal(78, 0)
+  token_transfers token_transfers[]
+}
+
+model transactions {
+  hash                     String            @id @db.Char(66)
+  nonce                    BigInt
+  block_hash               String            @db.Char(66)
+  block_number             BigInt
+  transaction_index        BigInt
+  from_address             String            @db.Char(42)
+  to_address               String?           @db.Char(42)
+  value                    Decimal           @db.Decimal(38, 0)
+  gas                      BigInt
+  gas_price                BigInt
+  input                    String?
+  block_timestamp          BigInt
+  max_fee_per_gas          BigInt?
+  max_priority_fee_per_gas BigInt?
+  transaction_type         Int?
+  logs                     logs[]
+  receipts                 receipts?
+  token_transfers          token_transfers[]
+  blocks                   blocks            @relation(fields: [block_hash], references: [hash], onDelete: NoAction, onUpdate: NoAction)
+}
