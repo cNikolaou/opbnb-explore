@@ -29,23 +29,26 @@ export default function TransactionsFeeDisplay() {
 
   return (
     <>
-      <div>
-        <h2>Highest Gas Paid Transactions</h2>
-        <table className="table-auto">
-          <thead>
+      <h2 className="text-xl font-semibold mb-4 text-center">
+        Highest Gas Paid Transactions
+      </h2>
+      <div className="relative overflow-x-auto">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th>Transaction</th>
-              <th>From</th>
-              <th>To</th>
+              <th scope="col" className="px-6 py-3">
+                Transaction
+              </th>
             </tr>
           </thead>
           <tbody>
             {highestGasPaidTransactions &&
               highestGasPaidTransactions?.map((trn) => (
-                <tr key={trn.transaction_hash}>
-                  <td>{trn.transaction_hash}</td>
-                  <td>{trn.from_address}</td>
-                  <td>{trn.to_address}</td>
+                <tr
+                  key={trn.transaction_hash}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <td className="px-6 py-4">{trn.transaction_hash}</td>
                 </tr>
               ))}
           </tbody>

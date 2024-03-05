@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { pool } from '../../lib/db';
 
 export type ContractsCreated = {
-  cotract_address: string;
+  contract_address: string;
 };
 
 export type ResponseData = {

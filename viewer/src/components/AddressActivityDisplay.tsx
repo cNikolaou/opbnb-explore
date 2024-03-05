@@ -29,20 +29,30 @@ export default function AddressActivityDisplay() {
 
   return (
     <>
-      <div>
-        <table className="table-auto">
-          <thead>
+      <h2 className="text-xl font-semibold mb-4 text-center">
+        Addresses with Most Activity
+      </h2>
+      <div className="relative overflow-x-auto">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th>Address</th>
-              <th>Transactions</th>
+              <th scope="col" className="px-6 py-3">
+                Address
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Transactions
+              </th>
             </tr>
           </thead>
           <tbody>
             {mostActiveAddresses &&
               mostActiveAddresses.map((address) => (
-                <tr key={address.address}>
-                  <td>{address.address}</td>
-                  <td>{address.transaction_count}</td>
+                <tr
+                  key={address.address}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <td className="px-6 py-4">{address.address}</td>
+                  <td className="px-6 py-4">{address.transaction_count}</td>
                 </tr>
               ))}
           </tbody>

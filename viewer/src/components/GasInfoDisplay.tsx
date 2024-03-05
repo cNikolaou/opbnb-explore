@@ -47,39 +47,40 @@ export default function GasInfoDisplay() {
 
   return (
     <>
-      <h3>Last 2 Hours Overview</h3>
-      <div>
-        <div>Latest Block</div>
-        <div>Number: {latestBlockNumber}</div>
-        <div>Base Gas Fee: {baseFeePerGas}</div>
+      <div className="mx-auto max-w-md text-left mb-5">
+        <div>Latest Block Number: {latestBlockNumber}</div>
+        <div>Latest Block Base Gas Fee: {baseFeePerGas}</div>
       </div>
 
-      <LineChart
-        width={500}
-        height={300}
-        data={avgEffectiveGasPrice}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis tick={false} dataKey="name" label="Gas in Gwei" />
-        <YAxis />
-        <Tooltip
-          formatter={(value, name, props) => [`${value} Gwei`, 'Average Gas']}
-          itemStyle={{ color: 'black' }}
-        />
-        <Line
-          type="monotone"
-          dataKey="avg"
-          stroke="#ffc658"
-          strokeWidth={3}
-          activeDot={{ r: 8 }}
-        />
-      </LineChart>
+      <div className="flex justify-center items-center bg-gray-200 p-4">
+        <LineChart
+          width={500}
+          height={300}
+          data={avgEffectiveGasPrice}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+          style={{ backgroundColor: 'white' }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis tick={false} dataKey="name" label="Gas in Gwei" />
+          <YAxis />
+          <Tooltip
+            formatter={(value, name, props) => [`${value} Gwei`, 'Average Gas']}
+            itemStyle={{ color: 'black' }}
+          />
+          <Line
+            type="monotone"
+            dataKey="avg"
+            stroke="#ffc658"
+            strokeWidth={3}
+            activeDot={{ r: 8 }}
+          />
+        </LineChart>
+      </div>
     </>
   );
 }

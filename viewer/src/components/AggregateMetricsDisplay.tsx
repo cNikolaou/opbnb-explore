@@ -38,19 +38,10 @@ export default function AggregateMetricsDisplay() {
 
   return (
     <>
-      <div>
+      <div className="mx-auto max-w-md text-left mb-5">
         <div>Block Time (avg.): {avgBlockTime}</div>
         <div>Transactions per Block (avg.): {avgTransactionsPerBlock}</div>
         <div>Contracts Created: {contractsCreated?.length}</div>
-      </div>
-      <div>
-        <h2>Contracts Created</h2>
-        <ul>
-          {contractsCreated &&
-            contractsCreated?.map((contract) => (
-              <li key={contract.cotract_address}>{contract.cotract_address}</li>
-            ))}
-        </ul>
       </div>
     </>
   );

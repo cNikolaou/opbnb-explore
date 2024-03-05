@@ -47,7 +47,7 @@ export default async function handler(
     ORDER BY
       transaction_count DESC
     LIMIT
-      30;
+      20;
   `;
 
   const mostActiveAddressesResponse = await client.query(
