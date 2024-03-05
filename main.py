@@ -87,7 +87,7 @@ latest_processed_block_number = w3.eth.getBlock("latest")["number"]
 # the data from the new blocks.
 while True:
 
-    time.sleep(1)
+    time.sleep(settings.BLOCK_DATA_PULL_INTERVAL)
     latest_block_number = w3.eth.getBlock("latest")["number"]
 
     if latest_block_number > latest_processed_block_number + 1:
