@@ -108,6 +108,45 @@ def load_transactions_data(input_filename: str, table_name: str = "transactions"
     conn.close()
 
 
+def load_receipts_data(input_filename: str, table_name: str = "receipts"):
+
+    conn = psycopg2.connect(
+        dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST
+    )
+    cur = conn.cursor()
+
+    with open(input_filename) as f:
+
+        # skip header and copy the rest
+        next(f)
+        cur.copy_from(
+            f,
+            table_name,
+            sep=",",
+            columns=(
+                "transaction_hash",
+                "transaction_index",
+                "block_hash",
+                "block_number",
+                "cumulative_gas_used",
+                "gas_used",
+                "contract_address",
+                "root",
+                "status",
+                "effective_gas_price",
+                "l1_fee",
+                "l1_gas_used",
+                "l1_gas_price",
+                "l1_fee_scalar",
+            ),
+            null="",
+        )
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 def load_token_transfers_data(input_filename: str, table_name: str = "token_transfers"):
 
     conn = psycopg2.connect(

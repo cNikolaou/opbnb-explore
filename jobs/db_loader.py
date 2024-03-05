@@ -7,6 +7,7 @@ from threading import Thread
 from database.loaders import (
     load_blocks_data,
     load_transactions_data,
+    load_receipts_data,
     load_token_transfers_data,
     load_tokens_data,
 )
@@ -27,6 +28,8 @@ def load_to_table(file_path: Path, db_table: str, retain_origin_files: bool = Tr
             load_token_transfers_data(file_path)
         elif db_table == "tokens":
             load_tokens_data(file_path)
+        elif db_table == "receipts":
+            load_receipts_data(file_path)
 
         logger.info(
             f"Loaded data to table `{db_table}` from: {file_path} "

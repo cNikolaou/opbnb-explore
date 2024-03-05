@@ -134,7 +134,6 @@ def export_all_common(
 
         ready_files_queue.put(blocks_file)
         ready_files_queue.put(transactions_file)
-        logger.info("--- FINISHED BLOCKS AND TRANSACTIONS ---")
 
         # # # token_transfers # # #
 
@@ -170,7 +169,6 @@ def export_all_common(
                 max_workers=max_workers,
             )
             job.run()
-            logger.info("--- FINISHED TOKEN TRANFERS ---")
 
         # # # receipts_and_logs # # #
 
@@ -238,7 +236,6 @@ def export_all_common(
             job.run()
             ready_files_queue.put(logs_file)
             ready_files_queue.put(receipts_file)
-            logger.info("--- FINISHED RECEIPTS AND LOGS ---")
 
         # # # contracts # # #
 
@@ -293,7 +290,6 @@ def export_all_common(
             )
             job.run()
             ready_files_queue.put(contracts_file)
-            logger.info("--- FINISHED CONTRACTS ---")
 
         # # # tokens # # #
 
@@ -344,7 +340,6 @@ def export_all_common(
                 job.run()
                 ready_files_queue.put(tokens_file)
                 ready_files_queue.put(token_transfers_file)
-                logger.info("--- FINISHED TOKENS ---")
 
         # # # finish # # #
         shutil.rmtree(os.path.dirname(cache_output_dir))
