@@ -6,17 +6,18 @@ volumes:
 
 services:
   etl:
-    build: .
+    build:
+      context: etl/
     environment:
-      DB_HOST: db
       DB_PASSWORD: wordpass
     env_file:
       - .env
     depends_on:
       - db
-    # command: tail -f /dev/null
     volumes:
-      - ./jobs:/app/jobs
+      - ./etl/jobs:/app/jobs
+    # for debugging container changes
+    # command: tail -f /dev/null
 
   db:
     image: postgres:16
@@ -25,6 +26,7 @@ services:
     shm_size: 128mb
     environment:
       POSTGRES_PASSWORD: wordpass
-      POSTGRES_DB: opbnb
     volumes:
       - opbnb_data:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
