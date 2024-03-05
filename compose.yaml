@@ -7,8 +7,10 @@ volumes:
 services:
   etl:
     build:
-      context: etl/
+      context: ./etl
     environment:
+      DB_HOST: db
+      DB_NAME: opbnbdata
       DB_PASSWORD: wordpass
     env_file:
       - .env
@@ -26,6 +28,8 @@ services:
     shm_size: 128mb
     environment:
       POSTGRES_PASSWORD: wordpass
+      POSTGRES_USER: postgres
+      POSTGRES_DB: opbnbdata
     volumes:
       - opbnb_data:/var/lib/postgresql/data
     ports:
