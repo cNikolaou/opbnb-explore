@@ -1,0 +1,30 @@
+version: "3.8"
+
+
+volumes:
+  opbnb_data:
+
+services:
+  etl:
+    build: .
+    environment:
+      DB_HOST: db
+      DB_PASSWORD: wordpass
+    env_file:
+      - .env
+    depends_on:
+      - db
+    # command: tail -f /dev/null
+    volumes:
+      - ./jobs:/app/jobs
+
+  db:
+    image: postgres:16
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: wordpass
+      POSTGRES_DB: opbnb
+    volumes:
+      - opbnb_data:/var/lib/postgresql/data
