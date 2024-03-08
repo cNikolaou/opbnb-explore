@@ -12,12 +12,14 @@ services:
       DB_HOST: db
       DB_NAME: opbnbdata
       DB_PASSWORD: wordpass
+      # PROVIDER_URI: https://opbnb-mainnet-rpc.bnbchain.org
     env_file:
       - .env
     depends_on:
       - db
     volumes:
-      - ./etl/jobs:/app/jobs
+      - ./data:/app/data
+      # - ./etl/jobs:/app/jobs
     # for debugging container changes
     # command: tail -f /dev/null
 
@@ -43,8 +45,10 @@ services:
     environment:
       DB_HOST: db
       DB_USER: postgres
-      DB_PASS: wordpass
+      DB_PASSWORD: wordpass
       DB_NAME: opbnbdata
+    # volumes:
+    #   - ./viewer/src:/app/src
     depends_on:
       - db
     # for debugging container changes
