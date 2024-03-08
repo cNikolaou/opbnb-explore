@@ -257,12 +257,14 @@ class DBLoader:
         """
         while True:
 
-            file_path = Path(self.file_path_queue.get())
+            file_path_str = self.file_path_queue.get()
 
             # if we reached the end of the files to be processed
-            if file_path is None:
+            if file_path_str is None:
                 self.file_path_queue.task_done()
                 break
+
+            file_path = Path(file_path_str)
 
             db_table = file_path.parent.parts[1]
 
@@ -271,7 +273,6 @@ class DBLoader:
             self.file_path_queue.task_done()
 
     def start(self):
-
         for _ in range(self.max_workers):
             thread = Thread(target=self.load)
             thread.start()
