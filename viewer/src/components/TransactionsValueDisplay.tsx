@@ -40,7 +40,7 @@ export default function TransactionsValueDisplay() {
             <tr>
               <th scope="col" className="px-6 py-3">
                 Transaction (avg. value:{' '}
-                {Math.round(avgTransactionValue / 1e12) / 1e6} ETH)
+                {Math.round(avgTransactionValue / 1e12) / 1e6} BNB)
               </th>
             </tr>
           </thead>
