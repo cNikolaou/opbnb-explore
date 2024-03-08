@@ -65,7 +65,7 @@ export default async function handler(
     groupInterval,
   ]);
 
-  console.log(gasFeeAvgResult.rows);
+  // console.log(gasFeeAvgResult.rows);
 
   client.release();
 
