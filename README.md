@@ -29,7 +29,7 @@ Compose or run a Python and a Node processes.
 In either case you want to probably configure the `PROVIDER_URI`.
 
 The default provider used is the `https://opbnb-mainnet-rpc.bnbchain.org`. You
-can find more information on the [opBNB Documentation](https://docs.bnbchain.org/opbnb-docs/docs/intro/). However this provider has limits (which are currently enough for
+can find more information on the [opBNB Documentation](https://docs.bnbchain.org/opbnb-docs/docs/build-on-opbnb/opbnb-network-info/#opbnb-rpc-endpoints). However this provider has limits (which are currently enough for
 fetching new data but it will take too long to fetch historical data).
 
 In either case it's better to configure the system by using an `.env` file. To
