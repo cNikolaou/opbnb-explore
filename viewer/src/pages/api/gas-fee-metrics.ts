@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { pool, prisma } from '../../lib/db';
+import { pool } from '../../lib/db';
 
 type AvgEffectiveGasPrice = {
   block_range_start: string;
@@ -18,16 +18,32 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>,
 ) {
-  const latestProcessedBlock = await prisma.blocks.findFirst({
-    orderBy: { number: 'desc' },
-  });
+  const client = await pool.connect();
+
+  const latestProcessedBlockQuery = `
+    SELECT
+      number, base_fee_per_gas
+    FROM
+      blocks
+    ORDER BY
+      number DESC
+    LIMIT 1;
+  `;
+
+  const latestProcessedBlockResult = await client.query(
+    latestProcessedBlockQuery,
+  );
+
+  const latestProcessedBlock = BigInt(
+    latestProcessedBlockResult.rows[0].number,
+  );
 
   const lastNumber = 7200;
   const groupInterval = 300;
-  const endBlockNumber = latestProcessedBlock?.number || BigInt(1000);
+  const endBlockNumber = latestProcessedBlock;
   const startBlockNumber = endBlockNumber - BigInt(lastNumber);
 
-  const query = `
+  const gasFeeAvgQuery = `
     SELECT
       FLOOR((block_number - $1) / $3) * $3 + $1 AS block_range_start,
       FLOOR((block_number - $1) / $3) * $3 + $3 - 1 + $1 AS block_range_end,
@@ -43,20 +59,19 @@ export default async function handler(
       block_range_start ASC;
   `;
 
-  const client = await pool.connect();
-  const result = await client.query(query, [
+  const gasFeeAvgResult = await client.query(gasFeeAvgQuery, [
     startBlockNumber,
     endBlockNumber,
     groupInterval,
   ]);
 
-  console.log(result.rows);
+  console.log(gasFeeAvgResult.rows);
 
   client.release();
 
   res.status(200).json({
-    baseFeePerGas: String(latestProcessedBlock?.base_fee_per_gas),
-    latestBlockNumber: String(latestProcessedBlock?.number),
-    avgEffectiveGasPrice: result.rows,
+    baseFeePerGas: latestProcessedBlockResult.rows[0].base_fee_per_gas,
+    latestBlockNumber: latestProcessedBlockResult.rows[0].number,
+    avgEffectiveGasPrice: gasFeeAvgResult.rows,
   });
 }
