@@ -9,7 +9,9 @@ export default function Home() {
   return (
     <>
       <div className="container mx-auto px-4">
-        <h1 className="text-center text-xl font-bold my-8">opBNB Metrics</h1>
+        <h1 className="text-center text-xl font-bold my-8">
+          opBNB Metrics - Last 2 Hours
+        </h1>
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-gray-200 p-4">
             <div className="mb-8">
