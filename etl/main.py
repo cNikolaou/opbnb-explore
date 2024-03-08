@@ -79,8 +79,13 @@ fc = FileCleaner(
 )
 fc.start()
 
-# read the latest block number that has been processed
-latest_processed_block_number = w3.eth.getBlock("latest")["number"]
+# set the start block after which to start pulling data from the blockchain
+latest_processed_block_number = None
+if settings.ETL_STARTING_BLOCK >= 0:
+    latest_processed_block_number = settings.ETL_STARTING_BLOCK
+else:
+    latest_processed_block_number = w3.eth.getBlock("latest")["number"]
+
 
 # A block is created approximately every 1 second. The thread sleeps for 5
 # seconds, checks whether there has been new blocks created and if so, pulls
